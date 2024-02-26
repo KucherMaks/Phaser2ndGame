@@ -1,8 +1,8 @@
 var config = {
     // налаштування вигляду гри
     type: Phaser.AUTO,
-    width: 1000,
-    height: 1000,
+    width: 1920,
+    height: 1080,
     // фізика гри
     physics: {
         default: 'arcade',
