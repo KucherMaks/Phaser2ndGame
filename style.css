@@ -16,3 +16,9 @@ body {
     top: 10px;
     left: 10px;
 }
+
+timer {
+    position:fixed;
+    top: 10px;
+    left: 1000px;
+}

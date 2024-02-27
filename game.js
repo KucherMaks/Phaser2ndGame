@@ -3,6 +3,7 @@ var config = {
     type: Phaser.AUTO,
     width: 1920,
     height: 1080,
+    parent: game,
     // фізика гри
     physics: {
         default: 'arcade',
@@ -23,7 +24,7 @@ var game = new Phaser.Game(config);
 
 function preload() {
     // передзавантаження хмар, землі, зірочок та бомб, налаштування виду гравця
-    this.load.image('bg', 'assets/background.png');
+    this.load.image('bg', 'assets/background 2.png');
     this.load.image('ground', 'assets/new floor 1.png');
     this.load.image('trophy', 'assets/trophy.png');
     /*
@@ -38,17 +39,17 @@ var platforms;
 
 function create() {
     // тло
-    this.add.image(1000, 1000, 'bg');
+    this.add.image(0, 0, 'bg').setOrigin(0,0);
 
     platforms = this.physics.add.staticGroup();
 
     // земля
-    platforms.create(400, 568, 'ground').setScale(2).refreshBody();
+    platforms.create(0, 0, 'ground').setOrigin(0,0).setScale(2).refreshBody();
 
-    //платформи
-    platforms.create(600, 400, 'ground');
-    platforms.create(50, 250, 'ground');
-    platforms.create(750, 220, 'ground');
+    // //платформи
+    // platforms.create(600, 400, 'ground');
+    // platforms.create(50, 250, 'ground');
+    // platforms.create(750, 220, 'ground');
 
 
     // зірочки
@@ -90,3 +91,36 @@ function update() {
         player.setVelocityY(-330);
     } */
 }
+
+
+//функція збір зірочок
+function collectStar (player, star)
+{
+    star.disableBody(true, true);
+
+    score += 10;
+    /* scoreText.setText('Score: ' + score); */
+    document.getElemenyById('score').innerText = score;
+    document.getElemenyById('timer').innerText = timer;
+
+    if (stars.countActive(true) === 0)
+    {
+        stars.children.iterate(function (child) {
+
+            child.enableBody(true, child.x, 0, true, true);
+
+        });
+
+        var x = (player.x < 400) ? Phaser.Math.Between(400, 800) : Phaser.Math.Between(0, 400);
+
+        var bomb = bombs.create(x, 16, 'bomb');
+        bomb.setBounce(1);
+        bomb.setCollideWorldBounds(true);
+        bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
+
+    }
+}
+
+// змінні для рахунку
+var score = 0;
+var scoreText;
