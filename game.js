@@ -20,11 +20,12 @@ var config = {
 };
 
 var game = new Phaser.Game(config);
+var worldWidth = 9600;
 
 
 function preload() {
     // передзавантаження хмар, землі, зірочок та бомб, налаштування виду гравця
-    this.load.image('bg', 'assets/background 2.png');
+    this.load.image('bg', 'assets/fon+.png');
     this.load.image('ground', 'assets/new floor 1.png');
     this.load.image('trophy', 'assets/trophy.png');
     /*
@@ -39,12 +40,19 @@ var platforms;
 
 function create() {
     // тло
-    this.add.image(0, 0, 'bg').setOrigin(0,0);
+    /* this.add.image(0, 0, 'bg').setOrigin(0,0); */
 
     platforms = this.physics.add.staticGroup();
 
+    this.add.tileSprite(0, 0, worldWidth, 1080, "bg").setOrigin(0, 0);
+    for (var x=0; x<worldWidth; x=x+500) {
+        console.log(x);
+        platforms.create(x, 1080-500, 'ground').setOrigin(0, 0).refreshBody();
+    }
+    
+
     // земля
-    platforms.create(0, 0, 'ground').setOrigin(0,0).setScale(2).refreshBody();
+    /* platforms.create(0, 0, 'ground').setOrigin(0,0).setScale(2).refreshBody(); */
 
     // //платформи
     // platforms.create(600, 400, 'ground');
@@ -124,3 +132,4 @@ function collectStar (player, star)
 // змінні для рахунку
 var score = 0;
 var scoreText;
+
