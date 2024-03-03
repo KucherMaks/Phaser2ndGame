@@ -48,20 +48,21 @@ function create() {
 
     // тло на всю ширину екрану
     this.add.tileSprite(0, 0, worldWidth, 1080, "bg").setOrigin(0, 0);
-    
+
     // Земля на всю ширину екрану
-    for (var x=0; x<worldWidth; x=x+100) {
+    for (var x = 0; x < worldWidth; x = x + 100) {
         console.log(x);
-        platforms.create(x, 1080-400, 'ground++').setScale(0.2).setOrigin(0, 0).refreshBody();
+        platforms.create(x, 1080 - 400, 'ground++').setScale(0.2).setOrigin(0, 0).refreshBody();
     }
 
-    for (var x=0; x<worldWidth; x=x+50) {
+    // Земля під землею
+    for (var x = 0; x < worldWidth; x = x + 50) {
         console.log(x);
-        platforms.create(x, 1080-352, 'dirt').setScale(0.1).setOrigin(0, 0).refreshBody();
-        platforms.create(x, 1080-302, 'dirt').setScale(0.1).setOrigin(0, 0).refreshBody();
-        platforms.create(x, 1080-252, 'dirt').setScale(0.1).setOrigin(0, 0).refreshBody();
-        platforms.create(x, 1080-202, 'dirt').setScale(0.1).setOrigin(0, 0).refreshBody();
-        platforms.create(x, 1080-152, 'dirt').setScale(0.1).setOrigin(0, 0).refreshBody();
+        platforms.create(x, 1080 - 352, 'dirt').setScale(0.1).setOrigin(0, 0).refreshBody();
+        platforms.create(x, 1080 - 302, 'dirt').setScale(0.1).setOrigin(0, 0).refreshBody();
+        platforms.create(x, 1080 - 252, 'dirt').setScale(0.1).setOrigin(0, 0).refreshBody();
+        platforms.create(x, 1080 - 202, 'dirt').setScale(0.1).setOrigin(0, 0).refreshBody();
+        platforms.create(x, 1080 - 152, 'dirt').setScale(0.1).setOrigin(0, 0).refreshBody();
     }
 
     // про гравця
@@ -134,9 +135,9 @@ function create() {
     this.cameras.main.startFollow(player);
 
     // Додавання платформ випадковим чином на всю ширину екрану
-    for (var x = 0; x < worldWidth; x = x +Phaser.Math.FloatBetween(400, 500)){
+    for (var x = 0; x < worldWidth; x = x + Phaser.Math.FloatBetween(400, 500)) {
         var y = Phaser.Math.FloatBetween(400, 600);
-        console.log(x,y);
+        console.log(x, y);
         platforms.create(x, y, 'ground');
     }
 }
@@ -164,28 +165,26 @@ function update() {
     }
 }
 
-
 //функція збір зірочок
-function collectStar(player, star) 
-{
+function collectStar(player, star) {
     star.disableBody(true, true);
-    
+
     score += 10;
     scoreText.setText('score: ' + score);
 
     var x = Phaser.Math.Between(0, config.width);
-    var y = Phaser.Math.Between(0, config.height);
+    var y = Phaser.Math.Between(0, 680);
     var bomb = bombs.create(x, y, 'bomb');
     bomb.setBounce(1);
     bomb.setCollideWorldBounds(true);
     bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
 
-    if (stars.countActive(true) === 0) 
-    {
+    if (stars.countActive(true) === 0) {
         stars.children.iterate(function (child) {
             child.enableBody(true, child.x, 0, true, true);
             child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
         });
+        
     }
 }
 
@@ -194,8 +193,7 @@ var score = 0;
 var scoreText;
 
 // опис бомбочок
-function hitBomb (player, bomb)
-{
+function hitBomb(player, bomb) {
     this.physics.pause();
 
     player.setTint(0xff0000);
