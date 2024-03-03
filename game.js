@@ -26,9 +26,12 @@ function preload() {
     // передзавантаження хмар, землі, зірочок та бомб, налаштування виду гравця
     this.load.image('bg', 'assets/fon+.png');
     this.load.image('ground', 'assets/platform3.png');
+    this.load.image('ground+', 'assets/new floor 1.png')
+    this.load.image('ground++', 'assets/floor 1+.png')
     this.load.image('trophy', 'assets/trophy.png');
     this.load.image('star', 'assets/star.png');
     this.load.image('bomb', 'assets/rock.png');
+    this.load.image('dirt', 'assets/dirt-wall.png')
     this.load.spritesheet('dude',
         'assets/dude.png',
         { frameWidth: 32, frameHeight: 48 }
@@ -47,9 +50,18 @@ function create() {
     this.add.tileSprite(0, 0, worldWidth, 1080, "bg").setOrigin(0, 0);
     
     // Земля на всю ширину екрану
-    for (var x=0; x<worldWidth; x=x+400) {
+    for (var x=0; x<worldWidth; x=x+100) {
         console.log(x);
-        platforms.create(x, 1080-400, 'ground').setOrigin(0, 0).refreshBody();
+        platforms.create(x, 1080-400, 'ground++').setScale(0.2).setOrigin(0, 0).refreshBody();
+    }
+
+    for (var x=0; x<worldWidth; x=x+50) {
+        console.log(x);
+        platforms.create(x, 1080-352, 'dirt').setScale(0.1).setOrigin(0, 0).refreshBody();
+        platforms.create(x, 1080-302, 'dirt').setScale(0.1).setOrigin(0, 0).refreshBody();
+        platforms.create(x, 1080-252, 'dirt').setScale(0.1).setOrigin(0, 0).refreshBody();
+        platforms.create(x, 1080-202, 'dirt').setScale(0.1).setOrigin(0, 0).refreshBody();
+        platforms.create(x, 1080-152, 'dirt').setScale(0.1).setOrigin(0, 0).refreshBody();
     }
 
     // про гравця
@@ -123,7 +135,7 @@ function create() {
 
     // Додавання платформ випадковим чином на всю ширину екрану
     for (var x = 0; x < worldWidth; x = x +Phaser.Math.FloatBetween(400, 500)){
-        var y = Phaser.Math.FloatBetween(300, 600);
+        var y = Phaser.Math.FloatBetween(400, 600);
         console.log(x,y);
         platforms.create(x, y, 'ground');
     }
