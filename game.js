@@ -22,43 +22,66 @@ var config = {
 var game = new Phaser.Game(config);
 var worldWidth = 9600;
 
-
 function preload() {
     // передзавантаження хмар, землі, зірочок та бомб, налаштування виду гравця
     this.load.image('bg', 'assets/fon+.png');
-    this.load.image('ground', 'assets/new floor 1.png');
+    this.load.image('ground', 'assets/platform3.png');
     this.load.image('trophy', 'assets/trophy.png');
-    /*
+    this.load.image('star', 'assets/star.png');
+    this.load.image('bomb', 'assets/rock.png');
     this.load.spritesheet('dude',
         'assets/dude.png',
         { frameWidth: 32, frameHeight: 48 }
     );
-    */
 }
 
 var platforms;
 
 function create() {
     // тло
-    /* this.add.image(0, 0, 'bg').setOrigin(0,0); */
+    // this.add.image(0, 0, 'bg').setOrigin(0,0);
 
     platforms = this.physics.add.staticGroup();
 
+    // тло на всю ширину екрану
     this.add.tileSprite(0, 0, worldWidth, 1080, "bg").setOrigin(0, 0);
-    for (var x=0; x<worldWidth; x=x+500) {
-        console.log(x);
-        platforms.create(x, 1080-500, 'ground').setOrigin(0, 0).refreshBody();
-    }
     
+    // Земля на всю ширину екрану
+    for (var x=0; x<worldWidth; x=x+400) {
+        console.log(x);
+        platforms.create(x, 1080-400, 'ground').setOrigin(0, 0).refreshBody();
+    }
 
-    // земля
-    /* platforms.create(0, 0, 'ground').setOrigin(0,0).setScale(2).refreshBody(); */
+    // про гравця
+    player = this.physics.add.sprite(100, 450, 'dude');
+    player.setBounce(0.2);
+    player.setCollideWorldBounds(false);
 
-    // //платформи
-    // platforms.create(600, 400, 'ground');
-    // platforms.create(50, 250, 'ground');
-    // platforms.create(750, 220, 'ground');
+    this.anims.create({
+        key: 'left',
+        frames: this.anims.generateFrameNumbers('dude', { start: 0, end: 3 }),
+        frameRate: 10,
+        repeat: -1
+    });
 
+    this.anims.create({
+        key: 'turn',
+        frames: [{ key: 'dude', frame: 4 }],
+        frameRate: 20
+    });
+
+    this.anims.create({
+        key: 'right',
+        frames: this.anims.generateFrameNumbers('dude', { start: 5, end: 8 }),
+        frameRate: 10,
+        repeat: -1
+    });
+
+    // коллайдер гравця та платформ
+    this.physics.add.collider(player, platforms);
+
+    //  задання управління
+    cursors = this.input.keyboard.createCursorKeys();
 
     // зірочки
     stars = this.physics.add.group({
@@ -75,10 +98,39 @@ function create() {
 
     // коллайдер зірочок та платформ
     this.physics.add.collider(stars, platforms);
+
+    //  стикання колайдера гравця з колайдером зірочок
+    this.physics.add.overlap(player, stars, collectStar, null, this);
+
+    //  рахунок
+    scoreText = this.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
+
+    // бомбочки
+    bombs = this.physics.add.group();
+
+    // коллайдер бомбочок і платформ
+    this.physics.add.collider(bombs, platforms);
+
+    // коллайдер гравця і бомбочок
+    this.physics.add.collider(player, bombs, hitBomb, null, this);
+
+    // Налаштування камери
+    this.cameras.main.setBounds(0, 0, worldWidth, 1080);
+    this.physics.world.setBounds(0, 0, worldWidth, 1080);
+
+    // Слідкування камери за гравцем
+    this.cameras.main.startFollow(player);
+
+    // Додавання платформ випадковим чином на всю ширину екрану
+    for (var x = 0; x < worldWidth; x = x +Phaser.Math.FloatBetween(400, 500)){
+        var y = Phaser.Math.FloatBetween(300, 600);
+        console.log(x,y);
+        platforms.create(x, y, 'ground');
+    }
 }
 
 function update() {
-    /* // саме управління
+    // саме управління
     if (cursors.left.isDown) {
         player.setVelocityX(-160);
 
@@ -97,35 +149,31 @@ function update() {
 
     if (cursors.up.isDown && player.body.touching.down) {
         player.setVelocityY(-330);
-    } */
+    }
 }
 
 
 //функція збір зірочок
-function collectStar (player, star)
+function collectStar(player, star) 
 {
     star.disableBody(true, true);
-
+    
     score += 10;
-    /* scoreText.setText('Score: ' + score); */
-    document.getElemenyById('score').innerText = score;
-    document.getElemenyById('timer').innerText = timer;
+    scoreText.setText('score: ' + score);
 
-    if (stars.countActive(true) === 0)
+    var x = Phaser.Math.Between(0, config.width);
+    var y = Phaser.Math.Between(0, config.height);
+    var bomb = bombs.create(x, y, 'bomb');
+    bomb.setBounce(1);
+    bomb.setCollideWorldBounds(true);
+    bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
+
+    if (stars.countActive(true) === 0) 
     {
         stars.children.iterate(function (child) {
-
             child.enableBody(true, child.x, 0, true, true);
-
+            child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
         });
-
-        var x = (player.x < 400) ? Phaser.Math.Between(400, 800) : Phaser.Math.Between(0, 400);
-
-        var bomb = bombs.create(x, 16, 'bomb');
-        bomb.setBounce(1);
-        bomb.setCollideWorldBounds(true);
-        bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
-
     }
 }
 
@@ -133,3 +181,14 @@ function collectStar (player, star)
 var score = 0;
 var scoreText;
 
+// опис бомбочок
+function hitBomb (player, bomb)
+{
+    this.physics.pause();
+
+    player.setTint(0xff0000);
+
+    player.anims.play('turn');
+
+    gameOver = true;
+}
