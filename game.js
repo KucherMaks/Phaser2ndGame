@@ -34,6 +34,7 @@ function preload() {
     this.load.image('dirt', 'assets/dirt-wall.png')
     this.load.image('bush', 'assets/bush.png')
     this.load.image('crate', 'assets/crate.png')
+    this.load.image('rock', 'assets/rock.png')
     this.load.spritesheet('dude',
         'assets/dude.png',
         { frameWidth: 32, frameHeight: 48 }
@@ -71,16 +72,30 @@ function create() {
     for (var x = 0; x < worldWidth; x = x + Phaser.Math.FloatBetween(400, 500)) {
         var y = Phaser.Math.FloatBetween(400, 600);
         console.log(x, y);
-        platforms.create(x, y, 'ground');
+        platforms.create(x, y, 'ground').setDepth(10);
     }
 
     box = this.physics.add.staticGroup();
 
     // Додавання ящиків випадковим чином на всю ширину екрану
-    for (var x = 0; x < worldWidth; x = x + Phaser.Math.FloatBetween(200, 400)) {
+    for (var x = 0; x < worldWidth; x = x + Phaser.Math.FloatBetween(100, 300)) {
         var y = 680;
         console.log(x, y);
         box.create(x, y, 'crate').setScale(Phaser.Math.FloatBetween(0.3, 0.6)).setOrigin(0, 1).setDepth(Phaser.Math.FloatBetween(0, 10)).refreshBody();
+    }
+
+    // Додавання кущів випадковим чином на всю ширину екрану
+    for (var x = 0; x < worldWidth; x = x + Phaser.Math.FloatBetween(100, 300)) {
+        var y = 680;
+        console.log(x, y);
+        box.create(x, y, 'bush').setScale(Phaser.Math.FloatBetween(0.1, 0.4)).setOrigin(0, 1).setDepth(Phaser.Math.FloatBetween(0, 10)).refreshBody();
+    }
+
+    // Додавання каменів випадковим чином на всю ширину екрану
+    for (var x = 0; x < worldWidth; x = x + Phaser.Math.FloatBetween(100, 300)) {
+        var y = 680;
+        console.log(x, y);
+        box.create(x, y, 'rock').setScale(Phaser.Math.FloatBetween(1, 3)).setOrigin(0, 1).setDepth(Phaser.Math.FloatBetween(0, 10)).refreshBody();
     }
 
     // про гравця
