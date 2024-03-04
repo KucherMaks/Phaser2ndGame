@@ -20,7 +20,7 @@ var config = {
 };
 
 var game = new Phaser.Game(config);
-var worldWidth = 9600;
+var worldWidth = config.width*6;
 
 function preload() {
     // передзавантаження хмар, землі, зірочок та бомб, налаштування виду гравця
@@ -30,8 +30,10 @@ function preload() {
     this.load.image('ground++', 'assets/floor 1+.png')
     this.load.image('trophy', 'assets/trophy.png');
     this.load.image('star', 'assets/star.png');
-    this.load.image('bomb', 'assets/rock.png');
+    this.load.image('bomb', 'assets/bomb.png');
     this.load.image('dirt', 'assets/dirt-wall.png')
+    this.load.image('bush', 'assets/bush.png')
+    this.load.image('crate', 'assets/crate.png')
     this.load.spritesheet('dude',
         'assets/dude.png',
         { frameWidth: 32, frameHeight: 48 }
@@ -47,7 +49,7 @@ function create() {
     platforms = this.physics.add.staticGroup();
 
     // тло на всю ширину екрану
-    this.add.tileSprite(0, 0, worldWidth, 1080, "bg").setOrigin(0, 0);
+    this.add.tileSprite(0, 0, worldWidth, 1080, "bg").setOrigin(0, 0).setDepth(0);
 
     // Земля на всю ширину екрану
     for (var x = 0; x < worldWidth; x = x + 100) {
@@ -65,8 +67,24 @@ function create() {
         platforms.create(x, 1080 - 152, 'dirt').setScale(0.1).setOrigin(0, 0).refreshBody();
     }
 
+    // Додавання платформ випадковим чином на всю ширину екрану
+    for (var x = 0; x < worldWidth; x = x + Phaser.Math.FloatBetween(400, 500)) {
+        var y = Phaser.Math.FloatBetween(400, 600);
+        console.log(x, y);
+        platforms.create(x, y, 'ground');
+    }
+
+    box = this.physics.add.staticGroup();
+
+    // Додавання ящиків випадковим чином на всю ширину екрану
+    for (var x = 0; x < worldWidth; x = x + Phaser.Math.FloatBetween(200, 400)) {
+        var y = 680;
+        console.log(x, y);
+        box.create(x, y, 'crate').setScale(Phaser.Math.FloatBetween(0.3, 0.6)).setOrigin(0, 1).setDepth(Phaser.Math.FloatBetween(0, 10)).refreshBody();
+    }
+
     // про гравця
-    player = this.physics.add.sprite(100, 450, 'dude');
+    player = this.physics.add.sprite(100, 450, 'dude').setDepth(5);
     player.setBounce(0.2);
     player.setCollideWorldBounds(false);
 
@@ -133,13 +151,6 @@ function create() {
 
     // Слідкування камери за гравцем
     this.cameras.main.startFollow(player);
-
-    // Додавання платформ випадковим чином на всю ширину екрану
-    for (var x = 0; x < worldWidth; x = x + Phaser.Math.FloatBetween(400, 500)) {
-        var y = Phaser.Math.FloatBetween(400, 600);
-        console.log(x, y);
-        platforms.create(x, y, 'ground');
-    }
 }
 
 function update() {
