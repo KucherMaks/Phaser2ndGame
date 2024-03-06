@@ -93,10 +93,23 @@ function create() {
     }
 
     // Додавання платформ випадковим чином на всю ширину екрану
-    for (var x = 0; x < worldWidth; x = x + Phaser.Math.FloatBetween(400, 500)) {
-        var y = Phaser.Math.FloatBetween(400, 600);
-        console.log(x, y);
-        platforms.create(x, y, 'ground').setDepth(10);
+    // for (var x = 0; x < worldWidth; x = x + Phaser.Math.FloatBetween(400, 500)) {
+    //     var y = Phaser.Math.FloatBetween(400, 600);
+    //     console.log(x, y);
+    //     platforms.create(x, y, 'ground').setDepth(10);
+    // }
+
+    for (var x = 0; x < worldWidth; x = x + Phaser.Math.Between(400, 500)) {
+        var y = Phaser.Math.Between(100, 600)
+
+        platforms.create(x,y, 'skyGroundStart');
+
+        var i;
+        for (i = 1; i < Phaser.Math.Between(0,5); i++){
+            platforms.create(x + 128 * i, y, 'skyGround').setScale;
+        }
+
+        platforms.create(x+128*i, y, 'skyGroundEnd');
     }
 
     box = this.physics.add.staticGroup();
