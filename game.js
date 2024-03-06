@@ -47,7 +47,7 @@ function preload() {
     this.load.image('dirt', 'assets/dirt-wall.png')
 
     //додаткові об'єкти
-    this.load.image('bush', 'assets/bush.png')
+    this.load.image('bush', 'assets/bush-1.png')
     this.load.image('crate', 'assets/crate.png')
     this.load.image('rock', 'assets/rock.png')
 
