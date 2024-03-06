@@ -100,7 +100,7 @@ function create() {
     // }
 
     for (var x = 0; x < worldWidth; x = x + Phaser.Math.Between(400, 500)) {
-        var y = Phaser.Math.Between(100, 600)
+        var y = Phaser.Math.Between(200, 550)
 
         platforms.create(x,y, 'skyGroundStart');
 
