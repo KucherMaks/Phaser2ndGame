@@ -4,6 +4,7 @@ var config = {
     width: 1920,
     height: 1080,
     parent: game,
+    playerSpeed: 500,
     // фізика гри
     physics: {
         default: 'arcade',
@@ -24,17 +25,33 @@ var worldWidth = config.width*6;
 
 function preload() {
     // передзавантаження хмар, землі, зірочок та бомб, налаштування виду гравця
+    // фон
     this.load.image('bg', 'assets/fon+.png');
+    
+    // платформа літаюча
     this.load.image('ground', 'assets/platform3.png');
-    this.load.image('ground+', 'assets/new floor 1.png')
+    this.load.image('skyGround', 'assets/14.png')
+    this.load.image('skyGroundStart', 'assets/13.png')
+    this.load.image('skyGroundEnd', 'assets/15.png')
+
+    // земля
     this.load.image('ground++', 'assets/floor 1+.png')
+
+    // трофей
     this.load.image('trophy', 'assets/trophy.png');
-    this.load.image('star', 'assets/star.png');
+
+    // бомба
     this.load.image('bomb', 'assets/bomb.png');
+
+    // земля під землею
     this.load.image('dirt', 'assets/dirt-wall.png')
+
+    //додаткові об'єкти
     this.load.image('bush', 'assets/bush.png')
     this.load.image('crate', 'assets/crate.png')
     this.load.image('rock', 'assets/rock.png')
+
+    // гравець
     this.load.spritesheet('dude',
         'assets/dude.png',
         { frameWidth: 32, frameHeight: 48 }
@@ -47,15 +64,22 @@ function create() {
     // тло
     // this.add.image(0, 0, 'bg').setOrigin(0,0);
 
-    platforms = this.physics.add.staticGroup();
 
     // тло на всю ширину екрану
-    this.add.tileSprite(0, 0, worldWidth, 1080, "bg").setOrigin(0, 0).setDepth(0);
+    this.add.tileSprite(0, 0, worldWidth, 1080, "bg")
+        .setOrigin(0, 0)
+        .setScale(1)
+        .setDepth(0);
+    
+    platforms = this.physics.add.staticGroup();
 
     // Земля на всю ширину екрану
     for (var x = 0; x < worldWidth; x = x + 100) {
         console.log(x);
-        platforms.create(x, 1080 - 400, 'ground++').setScale(0.2).setOrigin(0, 0).refreshBody();
+        platforms.create(x, 1080 - 400, 'ground++')
+            .setScale(0.2)
+            .setOrigin(0, 0)
+            .refreshBody();
     }
 
     // Земля під землею
@@ -76,7 +100,6 @@ function create() {
     }
 
     box = this.physics.add.staticGroup();
-
     // Додавання ящиків випадковим чином на всю ширину екрану
     for (var x = 0; x < worldWidth; x = x + Phaser.Math.FloatBetween(100, 300)) {
         var y = 680;
@@ -84,24 +107,27 @@ function create() {
         box.create(x, y, 'crate').setScale(Phaser.Math.FloatBetween(0.3, 0.6)).setOrigin(0, 1).setDepth(Phaser.Math.FloatBetween(0, 10)).refreshBody();
     }
 
+    bush = this.physics.add.staticGroup();
     // Додавання кущів випадковим чином на всю ширину екрану
     for (var x = 0; x < worldWidth; x = x + Phaser.Math.FloatBetween(100, 300)) {
         var y = 680;
         console.log(x, y);
-        box.create(x, y, 'bush').setScale(Phaser.Math.FloatBetween(0.1, 0.4)).setOrigin(0, 1).setDepth(Phaser.Math.FloatBetween(0, 10)).refreshBody();
+        bush.create(x, y, 'bush').setScale(Phaser.Math.FloatBetween(0.1, 0.4)).setOrigin(0, 1).setDepth(Phaser.Math.FloatBetween(0, 10)).refreshBody();
     }
 
+    rock = this.physics.add.staticGroup();
     // Додавання каменів випадковим чином на всю ширину екрану
     for (var x = 0; x < worldWidth; x = x + Phaser.Math.FloatBetween(100, 300)) {
         var y = 680;
         console.log(x, y);
-        box.create(x, y, 'rock').setScale(Phaser.Math.FloatBetween(1, 3)).setOrigin(0, 1).setDepth(Phaser.Math.FloatBetween(0, 10)).refreshBody();
+        rock.create(x, y, 'rock').setScale(Phaser.Math.FloatBetween(1, 3)).setOrigin(0, 1).setDepth(Phaser.Math.FloatBetween(0, 10)).refreshBody();
     }
 
     // про гравця
-    player = this.physics.add.sprite(100, 450, 'dude').setDepth(5);
-    player.setBounce(0.2);
-    player.setCollideWorldBounds(false);
+    player = this.physics.add.sprite(100, 450, 'dude')
+        .setDepth(5)
+        .setBounce(0.2)
+        .setCollideWorldBounds(false);
 
     this.anims.create({
         key: 'left',
@@ -171,12 +197,12 @@ function create() {
 function update() {
     // саме управління
     if (cursors.left.isDown) {
-        player.setVelocityX(-160);
+        player.setVelocityX(-config.playerSpeed);
 
         player.anims.play('left', true);
     }
     else if (cursors.right.isDown) {
-        player.setVelocityX(160);
+        player.setVelocityX(config.playerSpeed);
 
         player.anims.play('right', true);
     }
