@@ -61,6 +61,13 @@ function preload() {
     );
 }
 
+// опис бомбочок
+function hitBomb(player, bomb) {
+    lives -= 1;
+    bomb.disableBody(true, true);
+    live.setText('Lives: ' + lives);
+}
+
 var platforms;
 
 function create() {
@@ -196,7 +203,7 @@ function create() {
         .setScrollFactor(0);
 
     //життя
-    lives = this.add.text(1700, 16, 'Lives: ' + lives, { fontSize: '32px', fill: '#000'})
+    live = this.add.text(1700, 16, 'Lives: ' + lives, { fontSize: '32px', fill: '#000'})
         .setOrigin(0,0)
         .setScrollFactor(0);
     
@@ -266,9 +273,11 @@ function collectStar(player, star) {
 // змінні для рахунку
 var score = 0;
 var scoreText;
+var playbtn;
 
-// опис бомбочок
-function hitBomb(player, bomb) {
+
+// кінець гри
+function end(player) {
     this.physics.pause();
 
     player.setTint(0xff0000);
@@ -277,13 +286,8 @@ function hitBomb(player, bomb) {
 
     gameOver = true;
 
-    // var playbtn = this.add.staticGroup(390, 600).createFromCache('reset');
-
-    // playbtn.setPerspective(600);
-
-    // playbtn.addListener('click');
-
-    // playbtn.on('click', function (event) {
-    //     this.scene.restart();
-    // });
+    const helloButton = this.add.text(700, 400, 'Restart game', {fontSize: 70, fill: '#FFF', backgroundColor: '#111' })
+        .on('pointerdown', () => this.scene.restart())
+        .setScrollFactor(0)
+        .setInteractive();
 }
