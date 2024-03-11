@@ -22,6 +22,7 @@ var config = {
 
 var game = new Phaser.Game(config);
 var worldWidth = config.width*6;
+var lives = 5;
 
 function preload() {
     // передзавантаження хмар, землі, зірочок та бомб, налаштування виду гравця
@@ -50,6 +51,8 @@ function preload() {
     this.load.image('bush', 'assets/bush-1.png')
     this.load.image('crate', 'assets/crate.png')
     this.load.image('rock', 'assets/rock.png')
+
+    this.load.image('reset', 'assets/reset.png')
 
     // гравець
     this.load.spritesheet('dude',
@@ -171,8 +174,8 @@ function create() {
     // зірочки
     stars = this.physics.add.group({
         key: 'trophy',
-        repeat: 11,
-        setXY: { x: 12, y: 0, stepX: 70 }
+        repeat: worldWidth/100,
+        setXY: { x: 12, y: 0, stepX: 100 }
     });
 
     stars.children.iterate(function (child) {
@@ -188,8 +191,15 @@ function create() {
     this.physics.add.overlap(player, stars, collectStar, null, this);
 
     //  рахунок
-    scoreText = this.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
+    scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' })
+        .setOrigin(0,0)
+        .setScrollFactor(0);
 
+    //життя
+    lives = this.add.text(1700, 16, 'Lives: ' + lives, { fontSize: '32px', fill: '#000'})
+        .setOrigin(0,0)
+        .setScrollFactor(0);
+    
     // бомбочки
     bombs = this.physics.add.group();
 
@@ -235,7 +245,7 @@ function collectStar(player, star) {
     star.disableBody(true, true);
 
     score += 10;
-    scoreText.setText('score: ' + score);
+    scoreText.setText('Score: ' + score);
 
     var x = Phaser.Math.Between(0, config.width);
     var y = Phaser.Math.Between(0, 680);
@@ -266,4 +276,14 @@ function hitBomb(player, bomb) {
     player.anims.play('turn');
 
     gameOver = true;
+
+    // var playbtn = this.add.staticGroup(390, 600).createFromCache('reset');
+
+    // playbtn.setPerspective(600);
+
+    // playbtn.addListener('click');
+
+    // playbtn.on('click', function (event) {
+    //     this.scene.restart();
+    // });
 }
