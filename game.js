@@ -63,7 +63,7 @@ function preload() {
 
 // опис бомбочок
 function hitBomb(player, bomb) {
-    lives -= 1;
+    lives = lives - 1;
     bomb.disableBody(true, true);
     live.setText('Lives: ' + lives);
 }
@@ -101,13 +101,6 @@ function create() {
         platforms.create(x, 1080 - 202, 'dirt').setScale(0.1).setOrigin(0, 0).refreshBody();
         platforms.create(x, 1080 - 152, 'dirt').setScale(0.1).setOrigin(0, 0).refreshBody();
     }
-
-    // Додавання платформ випадковим чином на всю ширину екрану
-    // for (var x = 0; x < worldWidth; x = x + Phaser.Math.FloatBetween(400, 500)) {
-    //     var y = Phaser.Math.FloatBetween(400, 600);
-    //     console.log(x, y);
-    //     platforms.create(x, y, 'ground').setDepth(10);
-    // }
 
     for (var x = 0; x < worldWidth; x = x + Phaser.Math.Between(400, 500)) {
         var y = Phaser.Math.Between(200, 550)
@@ -244,6 +237,10 @@ function update() {
 
     if (cursors.up.isDown && player.body.touching.down) {
         player.setVelocityY(-330);
+    }
+
+    if (lives = 0) {
+        end;
     }
 }
 
