@@ -40,7 +40,7 @@ function preload() {
     this.load.image('skyGroundEnd', 'assets/15.png')
 
     // земля
-    this.load.image('ground++', 'assets/floor 1+.png')
+    this.load.image('ground++', 'assets/2.png')
 
     // трофей
     this.load.image('trophy', 'assets/trophy.png');
@@ -51,12 +51,11 @@ function preload() {
     // земля під землею
     this.load.image('dirt', 'assets/dirt-wall.png')
 
-    //додаткові об'єкти
-    this.load.image('bush', 'assets/bush-1.png')
-    this.load.image('crate', 'assets/crate.png')
-    this.load.image('rock', 'assets/rock.png')
-
-    this.load.image('reset', 'assets/reset.png')
+    // додаткові об'єкти
+    this.load.image('bush', 'assets/bush.png')
+    this.load.image('crate', 'assets/Crate.png')
+    this.load.image('rock', 'assets/Stone.png')
+    this.load.image('heart', 'assets/heart.png')
 
     // гравець
     this.load.spritesheet('dude',
@@ -77,24 +76,15 @@ function create() {
     // Земля на всю ширину екрану
     for (var x = 0; x < worldWidth; x = x + 100) {
         console.log(x);
-        platforms.create(x, 1080 - 400, 'ground++')
-            .setScale(0.2)
+        platforms.create(x, 1080 - 128, 'ground++')
+            .setScale(1)
             .setOrigin(0, 0)
             .refreshBody();
     }
 
-    // Земля під землею
-    for (var x = 0; x < worldWidth; x = x + 50) {
-        console.log(x);
-        platforms.create(x, 1080 - 352, 'dirt').setScale(0.1).setOrigin(0, 0).refreshBody();
-        platforms.create(x, 1080 - 302, 'dirt').setScale(0.1).setOrigin(0, 0).refreshBody();
-        platforms.create(x, 1080 - 252, 'dirt').setScale(0.1).setOrigin(0, 0).refreshBody();
-        platforms.create(x, 1080 - 202, 'dirt').setScale(0.1).setOrigin(0, 0).refreshBody();
-        platforms.create(x, 1080 - 152, 'dirt').setScale(0.1).setOrigin(0, 0).refreshBody();
-    }
-
+    // платформи на всю ширину екрану
     for (var x = 0; x < worldWidth; x = x + Phaser.Math.Between(400, 500)) {
-        var y = Phaser.Math.Between(200, 550)
+        var y = Phaser.Math.Between(300, 900)
 
         platforms.create(x, y, 'skyGroundStart');
 
@@ -108,26 +98,37 @@ function create() {
 
     box = this.physics.add.staticGroup();
     // Додавання ящиків випадковим чином на всю ширину екрану
-    for (var x = 0; x < worldWidth; x = x + Phaser.Math.FloatBetween(100, 300)) {
-        var y = 680;
-        console.log(x, y);
+    for (var x = 0; x < worldWidth; x = x + Phaser.Math.FloatBetween(500, 1500)) {
+        var y = 952;
         box.create(x, y, 'crate').setScale(Phaser.Math.FloatBetween(0.3, 0.6)).setOrigin(0, 1).setDepth(Phaser.Math.FloatBetween(0, 10)).refreshBody();
     }
 
+    heart = this.physics.add.staticGroup();
+    // Додавання життів випадковим чином на всю ширину екрану
+    for (var x = 0; x < worldWidth; x = x + Phaser.Math.FloatBetween(1000, 2500)) {
+        var y = 100;
+        heart.create(x, y, 'heart').setScale(0.07).setOrigin(0, 1).refreshBody();
+    }
+
+    heart.children.iterate(function (child) {
+
+        child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
+
+    });
+
     bush = this.physics.add.staticGroup();
     // Додавання кущів випадковим чином на всю ширину екрану
-    for (var x = 0; x < worldWidth; x = x + Phaser.Math.FloatBetween(100, 300)) {
-        var y = 680;
-        console.log(x, y);
-        bush.create(x, y, 'bush').setScale(Phaser.Math.FloatBetween(0.1, 0.4)).setOrigin(0, 1).setDepth(Phaser.Math.FloatBetween(0, 10)).refreshBody();
+    for (var x = 0; x < worldWidth; x = x + Phaser.Math.FloatBetween(300, 500)) {
+        var y = 952;
+        bush.create(x, y, 'bush').setScale(Phaser.Math.FloatBetween(0.7, 1.2)).setOrigin(0, 1).setDepth(Phaser.Math.FloatBetween(0, 10)).refreshBody();
     }
 
     rock = this.physics.add.staticGroup();
     // Додавання каменів випадковим чином на всю ширину екрану
-    for (var x = 0; x < worldWidth; x = x + Phaser.Math.FloatBetween(100, 300)) {
-        var y = 680;
+    for (var x = 0; x < worldWidth; x = x + Phaser.Math.FloatBetween(300, 700)) {
+        var y = 952;
         console.log(x, y);
-        rock.create(x, y, 'rock').setScale(Phaser.Math.FloatBetween(1, 3)).setOrigin(0, 1).setDepth(Phaser.Math.FloatBetween(0, 10)).refreshBody();
+        rock.create(x, y, 'rock').setScale(Phaser.Math.FloatBetween(0.6, 1.1)).setOrigin(0, 1).setDepth(Phaser.Math.FloatBetween(0, 10)).refreshBody();
     }
 
     // про гравця
@@ -180,6 +181,12 @@ function create() {
 
     //  стикання колайдера гравця з колайдером зірочок
     this.physics.add.overlap(player, stars, collectStar, null, this);
+
+    // коллайдер зірочок та платформ
+    this.physics.add.collider(heart, platforms);
+
+    //  стикання колайдера гравця з колайдером зірочок
+    this.physics.add.overlap(player, heart, collectStar, null, this);
 
     //  рахунок
     scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' })
