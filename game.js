@@ -21,14 +21,18 @@ var config = {
 };
 
 var game = new Phaser.Game(config);
-var worldWidth = config.width*6;
+var worldWidth = config.width * 6;
 var lives = 5;
+var platforms;
+var score = 0;
+var scoreText;
+
 
 function preload() {
     // передзавантаження хмар, землі, зірочок та бомб, налаштування виду гравця
     // фон
     this.load.image('bg', 'assets/fon+.png');
-    
+
     // платформа літаюча
     this.load.image('ground', 'assets/platform3.png');
     this.load.image('skyGround', 'assets/14.png')
@@ -61,26 +65,13 @@ function preload() {
     );
 }
 
-// опис бомбочок
-function hitBomb(player, bomb) {
-    lives = lives - 1;
-    bomb.disableBody(true, true);
-    live.setText('Lives: ' + lives);
-}
-
-var platforms;
-
 function create() {
-    // тло
-    // this.add.image(0, 0, 'bg').setOrigin(0,0);
-
-
     // тло на всю ширину екрану
     this.add.tileSprite(0, 0, worldWidth, 1080, "bg")
         .setOrigin(0, 0)
         .setScale(1)
         .setDepth(0);
-    
+
     platforms = this.physics.add.staticGroup();
 
     // Земля на всю ширину екрану
@@ -105,14 +96,14 @@ function create() {
     for (var x = 0; x < worldWidth; x = x + Phaser.Math.Between(400, 500)) {
         var y = Phaser.Math.Between(200, 550)
 
-        platforms.create(x,y, 'skyGroundStart');
+        platforms.create(x, y, 'skyGroundStart');
 
         var i;
-        for (i = 1; i < Phaser.Math.Between(0,5); i++){
+        for (i = 1; i < Phaser.Math.Between(0, 5); i++) {
             platforms.create(x + 128 * i, y, 'skyGround').setScale;
         }
 
-        platforms.create(x+128*i, y, 'skyGroundEnd');
+        platforms.create(x + 128 * i, y, 'skyGroundEnd');
     }
 
     box = this.physics.add.staticGroup();
@@ -174,7 +165,7 @@ function create() {
     // зірочки
     stars = this.physics.add.group({
         key: 'trophy',
-        repeat: worldWidth/100,
+        repeat: worldWidth / 100,
         setXY: { x: 12, y: 0, stepX: 100 }
     });
 
@@ -192,14 +183,14 @@ function create() {
 
     //  рахунок
     scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' })
-        .setOrigin(0,0)
+        .setOrigin(0, 0)
         .setScrollFactor(0);
 
     //життя
-    live = this.add.text(1700, 16, 'Lives: ' + lives, { fontSize: '32px', fill: '#000'})
-        .setOrigin(0,0)
+    live = this.add.text(1700, 16, 'Lives: ' + lives, { fontSize: '32px', fill: '#000' })
+        .setOrigin(0, 0)
         .setScrollFactor(0);
-    
+
     // бомбочки
     bombs = this.physics.add.group();
 
@@ -238,10 +229,6 @@ function update() {
     if (cursors.up.isDown && player.body.touching.down) {
         player.setVelocityY(-330);
     }
-
-    if (lives = 0) {
-        end;
-    }
 }
 
 //функція збір зірочок
@@ -263,28 +250,29 @@ function collectStar(player, star) {
             child.enableBody(true, child.x, 0, true, true);
             child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
         });
-        
+
     }
 }
 
-// змінні для рахунку
-var score = 0;
-var scoreText;
-var playbtn;
 
+// опис бомбочок
+function hitBomb(player, bomb) {
+    lives = lives - 1;
+    bomb.disableBody(true, true);
+    live.setText('Lives: ' + lives);
 
-// кінець гри
-function end(player) {
-    this.physics.pause();
+    if (lives === 0) {
+        this.physics.pause();
 
-    player.setTint(0xff0000);
+        player.setTint(0xff0000);
 
-    player.anims.play('turn');
+        player.anims.play('turn');
 
-    gameOver = true;
+        gameOver = true;
 
-    const helloButton = this.add.text(700, 400, 'Restart game', {fontSize: 70, fill: '#FFF', backgroundColor: '#111' })
-        .on('pointerdown', () => this.scene.restart())
-        .setScrollFactor(0)
-        .setInteractive();
+        const helloButton = this.add.text(600, 400, 'Restart game', { fontSize: 90, fill: '#FFF', backgroundColor: '#111' })
+            .on('pointerdown', () => this.scene.restart())
+            .setScrollFactor(0)
+            .setInteractive();
+    }
 }
