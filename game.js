@@ -197,9 +197,6 @@ function create() {
     //  стикання колайдера гравця з колайдером зірочок
     this.physics.add.overlap(player, stars, collectStar, null, this);
 
-    // коллайдер зірочок та платформ
-    this.physics.add.collider(heart, platforms);
-
     //  рахунок
     scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' })
         .setOrigin(0, 0)
