@@ -56,7 +56,7 @@ function preload() {
     this.load.image('bush', 'assets/bush.png')
     this.load.image('crate', 'assets/Crate.png')
     this.load.image('rock', 'assets/Stone.png')
-    this.load.image('hearts', 'assets/heart.png')
+    this.load.image('heartss', 'assets/heart.png')
 
     // гравець
     this.load.spritesheet('dude',
@@ -96,23 +96,6 @@ function create() {
 
         platforms.create(x + 128 * i, y, 'skyGroundEnd');
     }
-
-
-    heart = this.physics.add.staticGroup();
-    // Додавання життів випадковим чином на всю ширину екрану
-    for (var x = 0; x < worldWidth; x = x + Phaser.Math.FloatBetween(1000, 2500)) {
-        var y = 500;
-        heart.create(x, y, 'hearts')
-            .setScale(0.07)
-            .setOrigin(0, 1)
-            .setCollideWorldBounds(true)
-            .refreshBody();
-    }
-    heart.children.iterate(function (child) {
-
-        child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
-
-    });
 
     box = this.physics.add.staticGroup();
     // Додавання ящиків випадковим чином на всю ширину екрану
@@ -197,6 +180,32 @@ function create() {
     //  стикання колайдера гравця з колайдером зірочок
     this.physics.add.overlap(player, stars, collectStar, null, this);
 
+
+    // життя
+    hearts = this.physics.add.group({
+        key: 'heartss',
+        repeat: 10,
+        setXY: { x: 12, y: 0, stepX: Phaser.Math.FloatBetween(1000, 2500) }
+    }); 
+
+    hearts.children.iterate(function(child) {
+        child.setScale(0.07);
+    });
+
+    hearts.children.iterate(function (child) {
+
+        child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
+
+    });
+
+    // коллайдер життів та платформ
+    this.physics.add.collider(hearts, platforms);
+
+    //  стикання колайдера гравця з колайдером життів
+    this.physics.add.overlap(player, hearts, collectHeart, null, this);
+
+
+
     //  рахунок
     scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' })
         .setOrigin(0, 0)
@@ -215,12 +224,6 @@ function create() {
 
     // коллайдер гравця і бомбочок
     this.physics.add.collider(player, bombs, hitBomb, null, this);
-
-    // коллайдер зірочок та платформ
-    this.physics.add.collider(heart, platforms);
-
-    //  стикання колайдера гравця з колайдером зірочок
-    this.physics.add.overlap(player, heart, collectHeart, null, this);
 
     // Налаштування камери
     this.cameras.main.setBounds(0, 0, worldWidth, 1080);
@@ -275,6 +278,7 @@ function collectStar(player, star) {
 
     }
 }
+
 
 function collectHeart(player, heart) {
     heart.disableBody(true, true);
