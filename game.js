@@ -28,6 +28,8 @@ var score = 0;
 var scoreText;
 var lifeText;
 
+var bullets;
+
 
 function preload() {
     // передзавантаження хмар, землі, зірочок та бомб, налаштування виду гравця
@@ -57,6 +59,8 @@ function preload() {
     this.load.image('crate', 'assets/Crate.png')
     this.load.image('rock', 'assets/Stone.png')
     this.load.image('heartss', 'assets/heart.png')
+
+    this.load.image('bullett', 'assets/bullet.png')
 
     // гравець
     this.load.spritesheet('dude',
@@ -231,6 +235,26 @@ function create() {
 
     // Слідкування камери за гравцем
     this.cameras.main.startFollow(player);
+
+
+
+    bullets = this.physics.add.group();
+
+    this.physics.add.collider(bullets, platforms, function (bullet) {
+        bullet.destroy();
+    }, null, this);
+
+    this.input.on('pointerdown', function (pointer) {
+        if (pointer.leftButtonDown()) {
+            fireBullet();
+        }
+    }, this);
+
+    this.physics.add.overlap(bullets, stars, destroyBulletAndObject, null, this);
+    this.physics.add.overlap(bullets, bombs, destroyBulletAndObject, null, this);
+    this.physics.add.overlap(bullets, box, destroyBulletAndObject, null, this);
+    this.physics.add.overlap(bullets, bush, destroyBulletAndObject, null, this);
+    this.physics.add.overlap(bullets, rock, destroyBulletAndObject, null, this);
 }
 
 function update() {
@@ -321,4 +345,21 @@ function hitBomb(player, bomb) {
             .setScrollFactor(0)
             .setInteractive();
     }
+}
+
+
+function fireBullet() {
+    var bullet = bullets.create(player.x, player.y, 'bullett');
+    bullet.setScale(0.03).setVelocityX(player.flipX ? -500 : 500); // Встановлення швидкості снаряду в залежності від напрямку гравця
+
+    // Визначення напрямку, в якому дивиться гравець і встановлення відповідного значення швидкості по горизонталі
+    if (cursors.left.isDown) {
+        bullet.setVelocityX(-config.playerSpeed);
+    } else {
+        bullet.setVelocityX(config.playerSpeed);
+    }
+}
+function destroyBulletAndObject(bullet, object) {
+    bullet.destroy();
+    object.destroy();
 }
