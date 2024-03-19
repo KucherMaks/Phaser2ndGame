@@ -60,7 +60,7 @@ function preload() {
     this.load.image('rock', 'assets/Stone.png')
     this.load.image('heartss', 'assets/heart.png')
 
-    this.load.image('bullett', 'assets/bullet.png')
+    this.load.image('bullett', 'assets/bullet1.png')
 
     // гравець
     this.load.spritesheet('dude',
@@ -352,7 +352,7 @@ function hitBomb(player, bomb) {
 
 function fireBullet() {
     var bullet = bullets.create(player.x, player.y, 'bullett');
-    bullet.setScale(0.03).setVelocityX(player.flipX ? -500 : 500); // Встановлення швидкості снаряду в залежності від напрямку гравця
+    bullet.setScale(0.1).setVelocityX(player.flipX ? -500 : 500); // Встановлення швидкості снаряду в залежності від напрямку гравця
 
     // Визначення напрямку, в якому дивиться гравець і встановлення відповідного значення швидкості по горизонталі
     if (cursors.left.isDown) {
