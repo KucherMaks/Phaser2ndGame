@@ -354,7 +354,7 @@ function fireBullet() {
 
     // Визначення напрямку, в якому дивиться гравець і встановлення відповідного значення швидкості по горизонталі
     if (cursors.left.isDown) {
-        bullet.setVelocityX(-config.playerSpeed);
+        bullet.setVelocityX(-config.playerSpeed).setFlipX(true);
     } else {
         bullet.setVelocityX(config.playerSpeed);
     }
