@@ -106,7 +106,7 @@ function create() {
     for (var x = 0; x < worldWidth; x = x + Phaser.Math.FloatBetween(500, 1500)) {
         var y = 952;
         box.create(x, y, 'crate')
-            .setScale(Phaser.Math.FloatBetween(0.3, 0.6))
+            .setScale(Phaser.Math.FloatBetween(0.5, 0.8))
             .setOrigin(0, 1)
             .setDepth(Phaser.Math.FloatBetween(0, 10))
             .refreshBody();
@@ -137,7 +137,8 @@ function create() {
     player = this.physics.add.sprite(100, 450, 'dude')
         .setDepth(5)
         .setBounce(0.2)
-        .setCollideWorldBounds(false);
+        .setCollideWorldBounds(false)
+        .setScale(1.5);
 
     this.anims.create({
         key: 'left',
@@ -174,7 +175,7 @@ function create() {
 
     stars.children.iterate(function (child) {
 
-        child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
+        child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8)).setScale(2);
 
     });
 
@@ -289,10 +290,11 @@ function collectStar(player, star) {
 
     var x = Phaser.Math.Between(0, config.width);
     var y = Phaser.Math.Between(0, 680);
-    var bomb = bombs.create(x, y, 'bomb');
-    bomb.setBounce(1);
-    bomb.setCollideWorldBounds(true);
-    bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
+    var bomb = bombs.create(x, y, 'bomb')
+        .setBounce(1)
+        .setScale(2)
+        .setCollideWorldBounds(true)
+        .setVelocity(Phaser.Math.Between(-200, 200), 20);
 
     if (stars.countActive(true) === 0) {
         stars.children.iterate(function (child) {
