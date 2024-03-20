@@ -27,7 +27,7 @@ var platforms;
 var score = 0;
 var scoreText;
 var lifeText;
-
+var enemyCount = 10;
 var bullets;
 
 
@@ -59,8 +59,8 @@ function preload() {
     this.load.image('crate', 'assets/Crate.png')
     this.load.image('rock', 'assets/Stone.png')
     this.load.image('heartss', 'assets/heart.png')
-
     this.load.image('bullett', 'assets/bullet1.png')
+    this.load.image('enemy', 'assets/enemy.png')
 
     // гравець
     this.load.spritesheet('dude',
@@ -89,7 +89,7 @@ function create() {
 
     // платформи на всю ширину екрану
     for (var x = 0; x < worldWidth; x = x + Phaser.Math.Between(400, 500)) {
-        var y = Phaser.Math.Between(300, 900)
+        var y = Phaser.Math.Between(350, 900)
 
         platforms.create(x, y, 'skyGroundStart');
 
@@ -185,15 +185,14 @@ function create() {
     //  стикання колайдера гравця з колайдером зірочок
     this.physics.add.overlap(player, stars, collectStar, null, this);
 
-
     // життя
     hearts = this.physics.add.group({
         key: 'heartss',
         repeat: 10,
         setXY: { x: 12, y: 0, stepX: Phaser.Math.FloatBetween(1000, 2500) }
-    }); 
+    });
 
-    hearts.children.iterate(function(child) {
+    hearts.children.iterate(function (child) {
         child.setScale(0.07);
     });
 
@@ -209,10 +208,8 @@ function create() {
     //  стикання колайдера гравця з колайдером життів
     this.physics.add.overlap(player, hearts, collectHeart, null, this);
 
-
-
     //  рахунок
-    scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' })
+    scoreText = this.add.text(26, 16, 'Score: 0', { fontSize: '32px', fill: '#000' })
         .setOrigin(0, 0)
         .setScrollFactor(0);
 
@@ -237,8 +234,6 @@ function create() {
     // Слідкування камери за гравцем
     this.cameras.main.startFollow(player);
 
-
-
     bullets = this.physics.add.group();
 
     this.physics.add.collider(bullets, platforms, function (bullet) {
@@ -251,11 +246,33 @@ function create() {
         }
     }, this);
 
-    this.physics.add.overlap(bullets, stars, destroyBulletAndObject, null, this);
+    enemy = this.physics.add.group({
+        key: 'enemy',
+        repeat: enemyCount,
+        setXY: { x: 1000, y: 1080-240, stepX: Phaser.Math.FloatBetween(500, 800) }
+    });
+
+    enemy.children.iterate(function (child) {
+        child.setCollideWorldBounds(true).setVelocityX(Phaser.Math.FloatBetween(-500, 500)).setScale(0.25)
+    });
+
+    enemyText = this.add.text(0, 50, showTextSymbols('😈', enemyCount), { fontSize: '40px', fill: '#000' }).setOrigin(0, 0).setScrollFactor(0)
+
+    this.physics.add.collider(enemy, platforms);
+    this.physics.add.collider(player, enemy, hitEnemy, null, this);
+
     this.physics.add.overlap(bullets, bombs, destroyBulletAndObject, null, this);
     this.physics.add.overlap(bullets, box, destroyBulletAndObject, null, this);
     this.physics.add.overlap(bullets, bush, destroyBulletAndObject, null, this);
     this.physics.add.overlap(bullets, rock, destroyBulletAndObject, null, this);
+    // this.physics.add.overlap(bullets, enemy, destroyBulletAndObject, null, this);
+    this.physics.add.overlap(bullets, enemy, (bullets, enemy) => {
+        bullets.disableBody(true, true);
+        enemy.disableBody(true, true);
+        enemyCount -=1;
+        enemyText.setText(showTextSymbols('😈', enemyCount))
+    }, null, this)
+
 }
 
 function update() {
@@ -279,6 +296,16 @@ function update() {
     if (cursors.up.isDown && player.body.touching.down) {
         player.setVelocityY(-330);
     }
+
+    if (Math.abs(player.x - enemy.x) < 600) {
+        enemy.moveTo(player, player.x, player.y, 300, 1)
+    }
+
+    enemy.children.iterate((child) => {
+        if (Math.random() < 0.005) {
+            child.setVelocityX(Phaser.Math.FloatBetween(-500, 500))
+        }
+    })
 }
 
 //функція збір зірочок
@@ -364,4 +391,35 @@ function fireBullet() {
 function destroyBulletAndObject(bullet, object) {
     bullet.destroy();
     object.destroy();
+}
+
+function showTextSymbols(symbol, count) {
+    var symbolLine = ' '
+
+    for (var i = 0; i < count; i++) {
+        symbolLine = symbolLine + symbol
+    }
+
+    return symbolLine
+}
+
+function hitEnemy(player, enemies) {
+    life -= 1;
+    enemies.disableBody(true, true);
+    lifeText.setText(showLife());
+
+    if (life === 0) {
+        this.physics.pause();
+
+        player.setTint(0xff0000);
+
+        player.anims.play('turn');
+
+        gameOver = true;
+
+        const helloButton = this.add.text(600, 400, 'Restart game', { fontSize: 90, fill: '#FFF', backgroundColor: '#111' })
+            .on('pointerdown', () => this.scene.restart(), life = 5)
+            .setScrollFactor(0)
+            .setInteractive();
+    }
 }
